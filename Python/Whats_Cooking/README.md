@@ -1,10 +1,10 @@
-What's Cooking?
+## What's Cooking?
 
 Use recipe ingredients to categorize the cuisine
 
-Data descriptions:
+## Data descriptions:
 
-train.json - the training set containing recipes id, type of cuisine, and list of ingredients
+train.json - the training set containing recipes id, type of cuisine, and list of ingredients  
 test.json - the test set containing recipes id, and list of ingredients
 
 ## Agenda
