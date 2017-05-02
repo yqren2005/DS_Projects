@@ -1,0 +1,222 @@
+{
+  "metadata" : {
+    "id" : "476756f6-3eaa-405b-8359-e590e23dd5fe",
+    "name" : "myFirstSparkNotebook",
+    "user_save_timestamp" : "1969-12-31T16:00:00.000Z",
+    "auto_save_timestamp" : "1969-12-31T16:00:00.000Z",
+    "language_info" : {
+      "name" : "scala",
+      "file_extension" : "scala",
+      "codemirror_mode" : "text/x-scala"
+    },
+    "trusted" : true,
+    "sparkNotebook" : null,
+    "customLocalRepo" : null,
+    "customRepos" : null,
+    "customDeps" : null,
+    "customImports" : null,
+    "customArgs" : null,
+    "customSparkConf" : null,
+    "customVars" : null
+  },
+  "cells" : [ {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "EC989055EF994EE188A391C6421C9880"
+    },
+    "cell_type" : "code",
+    "source" : "import org.apache.spark.sql.SparkSession\nimport org.apache.spark.ml.clustering.KMeans",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "import org.apache.spark.sql.SparkSession\r\nimport org.apache.spark.ml.clustering.KMeans\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 19,
+      "time" : "Took: 751 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "CCB6F32B83A74CE785D4B67B0A309229"
+    },
+    "cell_type" : "code",
+    "source" : "val spark = SparkSession.builder().getOrCreate()",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "spark: org.apache.spark.sql.SparkSession = org.apache.spark.sql.SparkSession@411a6e0a\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 20,
+      "time" : "Took: 602 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "38AE6E36430644E98DEC281BAA0968D8"
+    },
+    "cell_type" : "code",
+    "source" : "val data = spark\n          .read\n          .format(\"csv\")\n          .option(\"header\", \"true\")\n          .option(\"inferSchema\", \"true\")\n          .load(\"Wholesale customers data.csv\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "data: org.apache.spark.sql.DataFrame = [Channel: int, Region: int ... 6 more fields]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 21,
+      "time" : "Took: 630 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "03C19F958283454BB89D7DE6B720ED79"
+    },
+    "cell_type" : "code",
+    "source" : "data.show(3)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "+-------+------+-----+----+-------+------+----------------+----------+\n|Channel|Region|Fresh|Milk|Grocery|Frozen|Detergents_Paper|Delicassen|\n+-------+------+-----+----+-------+------+----------------+----------+\n|      2|     3|12669|9656|   7561|   214|            2674|      1338|\n|      2|     3| 7057|9810|   9568|  1762|            3293|      1776|\n|      2|     3| 6353|8808|   7684|  2405|            3516|      7844|\n+-------+------+-----+----+-------+------+----------------+----------+\nonly showing top 3 rows\n\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 22,
+      "time" : "Took: 971 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "699056CAFE0E4F338DB14B9659494984"
+    },
+    "cell_type" : "code",
+    "source" : "data.printSchema()",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "root\n |-- Channel: integer (nullable = true)\n |-- Region: integer (nullable = true)\n |-- Fresh: integer (nullable = true)\n |-- Milk: integer (nullable = true)\n |-- Grocery: integer (nullable = true)\n |-- Frozen: integer (nullable = true)\n |-- Detergents_Paper: integer (nullable = true)\n |-- Delicassen: integer (nullable = true)\n\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 23,
+      "time" : "Took: 839 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "25BEF2E047D545328649C175AEC44848"
+    },
+    "cell_type" : "code",
+    "source" : "for (i <- (0 to data.columns.length - 1)) {\n  println(data.columns(i) + \":\")\n  println(data.head(1)(0)(i) + \"\\n\")\n}",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "Channel:\n2\n\nRegion:\n3\n\nFresh:\n12669\n\nMilk:\n9656\n\nGrocery:\n7561\n\nFrozen:\n214\n\nDetergents_Paper:\n2674\n\nDelicassen:\n1338\n\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 24,
+      "time" : "Took: 1 second 33 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "611F97E2E01C484E88FB4E010B468554"
+    },
+    "cell_type" : "code",
+    "source" : "val cols = data.columns.drop(2)\nval feature_data = data.select(cols.head, cols.tail: _*)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "cols: Array[String] = Array(Fresh, Milk, Grocery, Frozen, Detergents_Paper, Delicassen)\r\nfeature_data: org.apache.spark.sql.DataFrame = [Fresh: int, Milk: int ... 4 more fields]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 25,
+      "time" : "Took: 580 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "A143ECF759DB484299709D24A4604CFA"
+    },
+    "cell_type" : "code",
+    "source" : "import org.apache.spark.ml.feature.VectorAssembler\nimport org.apache.spark.ml.linalg.Vectors\nval assembler = new VectorAssembler().setInputCols(cols).setOutputCol(\"features\")\nval training_data = assembler.transform(feature_data).select(\"features\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "import org.apache.spark.ml.feature.VectorAssembler\r\nimport org.apache.spark.ml.linalg.Vectors\r\nassembler: org.apache.spark.ml.feature.VectorAssembler = vecAssembler_b881b0d2835d\r\ntraining_data: org.apache.spark.sql.DataFrame = [features: vector]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 26,
+      "time" : "Took: 728 milliseconds, at 2017-5-2 2:14"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "65847F4175CE4CA48C4505DDFD2E9207"
+    },
+    "cell_type" : "code",
+    "source" : "for (k <- (3 to 50)) {\n  // Create a Kmeans Model with K=k\n  val kmeans = new KMeans().setK(k)\n  // Fit that model to the training_data\n  val model = kmeans.fit(training_data)\n  // Evaluate clustering by computing Within Set Sum of Squared Errors.\n  val wssse = model.computeCost(training_data)\n  // Shows the result.\n  println(s\"\\nK = $k, WSSSE = $wssse\")\n}",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "\nK = 3, WSSSE = 8.154092827918112E10\n\nK = 4, WSSSE = 6.485574002870931E10\n\nK = 5, WSSSE = 5.377123014278356E10\n\nK = 6, WSSSE = 5.587901721960211E10\n\nK = 7, WSSSE = 4.32853835086386E10\n\nK = 8, WSSSE = 3.704648443666969E10\n\nK = 9, WSSSE = 3.369818321199872E10\n\nK = 10, WSSSE = 3.299399684653898E10\n\nK = 11, WSSSE = 3.0711042335291878E10\n\nK = 12, WSSSE = 2.7942563780439884E10\n\nK = 13, WSSSE = 2.525282164019909E10\n\nK = 14, WSSSE = 2.5793670145501102E10\n\nK = 15, WSSSE = 2.4569153550145214E10\n\nK = 16, WSSSE = 2.293825901352713E10\n\nK = 17, WSSSE = 2.0355670033173244E10\n\nK = 18, WSSSE = 1.8983448033604366E10\n\nK = 19, WSSSE = 1.829849331557236E10\n\nK = 20, WSSSE = 1.8340438006554577E10\n\nK = 21, WSSSE = 1.6933914362188816E10\n\nK = 22, WSSSE = 1.6542051434026812E10\n\nK = 23, WSSSE = 1.6126200375391914E10\n\nK = 24, WSSSE = 1.5936353788028498E10\n\nK = 25, WSSSE = 1.5463613098436283E10\n\nK = 26, WSSSE = 1.50704990872183E10\n\nK = 27, WSSSE = 1.5077564130842348E10\n\nK = 28, WSSSE = 1.3087469757710781E10\n\nK = 29, WSSSE = 1.2759984317823853E10\n\nK = 30, WSSSE = 1.279855782144194E10\n\nK = 31, WSSSE = 1.3219644166151638E10\n\nK = 32, WSSSE = 1.1064769133731005E10\n\nK = 33, WSSSE = 1.0506623767009731E10\n\nK = 34, WSSSE = 1.086991785202323E10\n\nK = 35, WSSSE = 1.0026297953730923E10\n\nK = 36, WSSSE = 9.809238251335604E9\n\nK = 37, WSSSE = 9.631113383722965E9\n\nK = 38, WSSSE = 9.432177410154095E9\n\nK = 39, WSSSE = 9.219870853544529E9\n\nK = 40, WSSSE = 8.720443077451063E9\n\nK = 41, WSSSE = 8.876338562348682E9\n\nK = 42, WSSSE = 9.046049727826546E9\n\nK = 43, WSSSE = 8.356924328435384E9\n\nK = 44, WSSSE = 7.754274368814038E9\n\nK = 45, WSSSE = 7.414169386859474E9\n\nK = 46, WSSSE = 7.259925611723526E9\n\nK = 47, WSSSE = 7.399495290321456E9\n\nK = 48, WSSSE = 7.041342905859962E9\n\nK = 49, WSSSE = 6.87383610005661E9\n\nK = 50, WSSSE = 6.586704731867182E9\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 27,
+      "time" : "Took: 34 seconds 242 milliseconds, at 2017-5-2 2:15"
+    } ]
+  } ],
+  "nbformat" : 4
+}
