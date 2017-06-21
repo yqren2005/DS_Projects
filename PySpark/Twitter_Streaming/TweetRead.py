@@ -5,10 +5,10 @@ import json
 
 
 # Set up your credentials
-consumer_key='SMZQ5wq4hrH0FfXJSEBLMUJ6U'
-consumer_secret='Ng65fNannBmuIVwnc85XSBUPjbvEHrSb05Ljjmx2yB7vTMM60j'
-access_token ='23032405-fFRU4fm3JJjDSNJ6JxkxbXVSs4LF09BNWP3OJZxb1'
-access_secret='8Tjyv6kLaG9vFm3reuGSmlVGY4PhuriEodWIvSQgGwzmE'
+consumer_key=
+consumer_secret=
+access_token =
+access_secret=
 
 
 class TweetsListener(StreamListener):
@@ -21,7 +21,6 @@ class TweetsListener(StreamListener):
           msg = json.loads(data)
           print(msg['text'].encode('utf-8'))
           self.client_socket.send(msg['text'].encode('utf-8'))
-          return True
       except BaseException as e:
           print("Error on_data: %s" % str(e))
       return True
